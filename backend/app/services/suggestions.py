@@ -24,15 +24,25 @@ def _fallback_points(skill: str, recent_projects: List[str]) -> List[str]:
 def _fallback_placements(skill: str, recent_projects: List[str]) -> List[str]:
     placements = []
     if recent_projects:
-        placements.append(f"Experience section under the most recent project: add one impact bullet mentioning {skill}.")
-        placements.append("Projects section: include one implementation bullet and one outcomes bullet.")
+        placements.append(
+            f"Experience section under the most recent project: add one impact bullet mentioning {skill}."
+        )
+        placements.append(
+            "Projects section: include one implementation bullet and one outcomes bullet."
+        )
     else:
-        placements.append(f"Experience section under your latest role: add a bullet aligned to {skill}.")
-        placements.append("Skills summary + one supporting bullet in Experience for proof of impact.")
+        placements.append(
+            f"Experience section under your latest role: add a bullet aligned to {skill}."
+        )
+        placements.append(
+            "Skills summary + one supporting bullet in Experience for proof of impact."
+        )
     return placements
 
 
-def _fallback_suggestions(missing_skills: List[str], recent_projects: List[str]) -> Tuple[Dict[str, List[str]], Dict[str, List[str]]]:
+def _fallback_suggestions(
+    missing_skills: List[str], recent_projects: List[str]
+) -> Tuple[Dict[str, List[str]], Dict[str, List[str]]]:
     points: Dict[str, List[str]] = {}
     placements: Dict[str, List[str]] = {}
     for skill in missing_skills:
@@ -41,8 +51,14 @@ def _fallback_suggestions(missing_skills: List[str], recent_projects: List[str])
     return points, placements
 
 
-def _build_prompt(missing_skills: List[str], resume_text: str, job_description: str, recent_projects: List[str]) -> str:
-    recent_block = "\n".join(f"- {proj}" for proj in recent_projects) if recent_projects else "- Not confidently extracted"
+def _build_prompt(
+    missing_skills: List[str], resume_text: str, job_description: str, recent_projects: List[str]
+) -> str:
+    recent_block = (
+        "\n".join(f"- {proj}" for proj in recent_projects)
+        if recent_projects
+        else "- Not confidently extracted"
+    )
     return f"""
 You are a resume optimization assistant.
 
@@ -102,8 +118,12 @@ def _normalize_results(
         skill_points = raw_points.get(skill) if isinstance(raw_points, dict) else None
         skill_placements = raw_placements.get(skill) if isinstance(raw_placements, dict) else None
 
-        normalized_points = [str(item).strip() for item in (skill_points or []) if str(item).strip()]
-        normalized_placements = [str(item).strip() for item in (skill_placements or []) if str(item).strip()]
+        normalized_points = [
+            str(item).strip() for item in (skill_points or []) if str(item).strip()
+        ]
+        normalized_placements = [
+            str(item).strip() for item in (skill_placements or []) if str(item).strip()
+        ]
 
         if len(normalized_points) < 3:
             normalized_points = _fallback_points(skill, recent_projects)

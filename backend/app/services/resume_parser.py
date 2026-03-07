@@ -27,7 +27,6 @@ COMMON_SKILLS = {
     "powershell",
     "ruby",
     "php",
-
     # Backend
     "fastapi",
     "django",
@@ -39,7 +38,6 @@ COMMON_SKILLS = {
     "asp.net",
     "laravel",
     "ruby on rails",
-
     # Frontend
     "react",
     "next.js",
@@ -53,7 +51,6 @@ COMMON_SKILLS = {
     "material ui",
     "html",
     "css",
-
     # Databases SQL
     "sql",
     "postgresql",
@@ -65,7 +62,6 @@ COMMON_SKILLS = {
     "snowflake",
     "redshift",
     "bigquery",
-
     # Databases NoSQL
     "mongodb",
     "dynamodb",
@@ -75,7 +71,6 @@ COMMON_SKILLS = {
     "couchdb",
     "elasticsearch",
     "firebase",
-
     # Data Engineering
     "apache spark",
     "pyspark",
@@ -88,14 +83,12 @@ COMMON_SKILLS = {
     "databricks",
     "etl",
     "data engineering",
-
     # Python Data Libraries
     "pandas",
     "numpy",
     "dask",
     "polars",
     "scipy",
-
     # AI / Machine Learning
     "machine learning",
     "deep learning",
@@ -109,7 +102,6 @@ COMMON_SKILLS = {
     "transformers",
     "natural language processing",
     "computer vision",
-
     # LLM / GenAI
     "large language models",
     "llm",
@@ -123,7 +115,6 @@ COMMON_SKILLS = {
     "langgraph",
     "crewai",
     "autogen",
-
     # Vector Databases
     "pinecone",
     "weaviate",
@@ -132,12 +123,10 @@ COMMON_SKILLS = {
     "faiss",
     "chromadb",
     "pgvector",
-
     # Cloud Platforms
     "aws",
     "azure",
     "gcp",
-
     # AWS
     "aws ec2",
     "aws s3",
@@ -156,7 +145,6 @@ COMMON_SKILLS = {
     "aws glue",
     "aws athena",
     "aws redshift",
-
     # Azure
     "azure functions",
     "azure openai",
@@ -167,7 +155,6 @@ COMMON_SKILLS = {
     "azure devops",
     "azure sql",
     "azure cosmos db",
-
     # DevOps
     "docker",
     "kubernetes",
@@ -180,7 +167,6 @@ COMMON_SKILLS = {
     "argocd",
     "helm",
     "ci/cd",
-
     # APIs
     "rest api",
     "graphql",
@@ -192,7 +178,6 @@ COMMON_SKILLS = {
     "openapi",
     "swagger",
     "webhooks",
-
     # Testing
     "pytest",
     "unittest",
@@ -203,7 +188,6 @@ COMMON_SKILLS = {
     "playwright",
     "junit",
     "testng",
-
     # Messaging / Streaming
     "rabbitmq",
     "apache kafka",
@@ -211,7 +195,6 @@ COMMON_SKILLS = {
     "aws sqs",
     "aws sns",
     "google pubsub",
-
     # Security
     "saml",
     "rbac",
@@ -220,7 +203,6 @@ COMMON_SKILLS = {
     "tls",
     "hashing",
     "secrets management",
-
     # Observability
     "prometheus",
     "grafana",
@@ -229,13 +211,11 @@ COMMON_SKILLS = {
     "opentelemetry",
     "sentry",
     "new relic",
-
     # Version Control
     "git",
     "github",
     "gitlab",
     "bitbucket",
-
     # Architecture
     "microservices",
     "serverless",
@@ -243,13 +223,11 @@ COMMON_SKILLS = {
     "distributed systems",
     "domain driven design",
     "clean architecture",
-
     # OS
     "linux",
     "unix",
     "macos",
     "windows",
-
     # File Processing / OCR
     "pdf processing",
     "ocr",
@@ -287,6 +265,7 @@ ALIASES = {
     "vector db": "vector search",
     "vector database": "vector search",
 }
+
 
 def extract_text_from_pdf(file_bytes: bytes) -> str:
     LOGGER.info("Starting PDF text extraction")
