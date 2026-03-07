@@ -15,9 +15,18 @@ def _fallback_points(skill: str, recent_projects: List[str]) -> List[str]:
     cap_skill = skill.title()
     project_context = recent_projects[-1] if recent_projects else "my latest project"
     return [
-        f"Implemented {cap_skill} in {project_context[:120]} to improve reliability and delivery speed.",
-        f"Collaborated with cross-functional teams to operationalize {cap_skill} standards across releases.",
-        f"Applied {cap_skill} in production workflows with measurable quality and performance gains.",
+        (
+            f"Implemented {cap_skill} in {project_context[:120]} "
+            "to improve reliability and delivery speed."
+        ),
+        (
+            "Collaborated with cross-functional teams to "
+            f"operationalize {cap_skill} standards across releases."
+        ),
+        (
+            f"Applied {cap_skill} in production workflows "
+            "with measurable quality and performance gains."
+        ),
     ]
 
 
@@ -25,7 +34,8 @@ def _fallback_placements(skill: str, recent_projects: List[str]) -> List[str]:
     placements = []
     if recent_projects:
         placements.append(
-            f"Experience section under the most recent project: add one impact bullet mentioning {skill}."
+            "Experience section under the most recent project: "
+            f"add one impact bullet mentioning {skill}."
         )
         placements.append(
             "Projects section: include one implementation bullet and one outcomes bullet."
@@ -52,7 +62,10 @@ def _fallback_suggestions(
 
 
 def _build_prompt(
-    missing_skills: List[str], resume_text: str, job_description: str, recent_projects: List[str]
+    missing_skills: List[str],
+    resume_text: str,
+    job_description: str,
+    recent_projects: List[str],
 ) -> str:
     recent_block = (
         "\n".join(f"- {proj}" for proj in recent_projects)
@@ -66,9 +79,11 @@ Generate suggestions for missing skills based on resume and JD context.
 
 Rules:
 1) For each missing skill, return exactly 3 concise, resume-ready bullet points.
-2) Bullet points must be grounded in the resume context, especially the 2 most recent projects when available.
+2) Bullet points must be grounded in resume context,
+   especially the 2 most recent projects when available.
 3) Do not invent hard metrics or tools not implied by the provided text.
-4) Also provide 2 placement suggestions per skill describing where to add those bullets in the resume.
+4) Also provide 2 placement suggestions per skill
+   describing where to add bullets in the resume.
 5) Return valid JSON only. No markdown.
 
 JSON schema:

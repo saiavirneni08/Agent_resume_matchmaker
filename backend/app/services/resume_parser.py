@@ -1,8 +1,8 @@
+import io
 import logging
 import re
 from typing import List
 
-import io
 import pdfplumber
 
 LOGGER = logging.getLogger(__name__)
