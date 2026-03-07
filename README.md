@@ -134,6 +134,24 @@ just frontend         # run Next.js frontend
 just check            # compile-check backend python files
 ```
 
+## Quality Gates (Before Merge)
+
+This repo includes CI checks in [ci.yml](/Users/saichowdaryavirneni/resume-agent/.github/workflows/ci.yml):
+- Backend lint + format check (`ruff`)
+- Frontend lint (`next lint`)
+- Text/repo hygiene (`pre-commit` hooks: trailing whitespace, EOF, yaml/json checks, etc.)
+
+Run the same checks locally before pushing:
+
+```bash
+poetry install
+just precommit-install
+just precommit
+just lint
+```
+
+In GitHub, enable branch protection on `main` and require all CI status checks to pass before merge.
+
 ## Notes
 
 - The first analysis call may take longer because the sentence-transformer model is downloaded and loaded.

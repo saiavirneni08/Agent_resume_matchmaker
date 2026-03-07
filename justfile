@@ -6,6 +6,12 @@ default:
 install:
   poetry install
 
+precommit-install:
+  poetry run pre-commit install
+
+precommit:
+  poetry run pre-commit run --all-files
+
 serve:
   poetry run python -m backend.app.main
 
@@ -20,3 +26,14 @@ frontend:
 
 check:
   poetry run python -m compileall backend/app
+
+lint-backend:
+  poetry run ruff check backend/app
+  poetry run ruff format --check backend/app
+
+lint-frontend:
+  cd frontend && npm run lint
+
+lint:
+  just lint-backend
+  just lint-frontend
