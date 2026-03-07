@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "resume-agent"
+version = "0.1.0"
+description = "Resume-to-job matching backend and frontend workspace"
+authors = ["Sai <saiavirni@gmail.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.12,<3.14"
+fastapi = "0.116.1"
+uvicorn = { version = "0.35.0", extras = ["standard"] }
+pdfplumber = "0.11.7"
+sentence-transformers = "3.0.1"
+scikit-learn = "1.5.1"
+torch = "2.5.1"
+python-multipart = "0.0.20"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

@@ -110,6 +110,30 @@ Then open:
 - Frontend: http://localhost:3000
 - Backend docs: http://localhost:8000/docs
 
+## Local Run (Poetry + Just)
+
+Prerequisites:
+- Python 3.12
+- Poetry
+- just
+
+From project root:
+
+```bash
+poetry install
+just serve
+```
+
+Useful commands:
+
+```bash
+just install          # install python deps via poetry
+just backend          # run FastAPI backend
+just frontend-install # install frontend deps
+just frontend         # run Next.js frontend
+just check            # compile-check backend python files
+```
+
 ## Notes
 
 - The first analysis call may take longer because the sentence-transformer model is downloaded and loaded.
