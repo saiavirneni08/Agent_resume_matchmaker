@@ -1,0 +1,117 @@
+# Resume Agent
+
+Resume Agent is a full-stack application that matches uploaded resumes against job descriptions and returns:
+
+- `match_score`
+- `matched_skills`
+- `missing_skills`
+- `supporting_points` for missing skills
+- `placement_suggestions` for where to add those points in the resume
+
+## Tech Stack
+
+### Backend
+- FastAPI
+- Uvicorn
+- pdfplumber
+- sentence-transformers (`all-MiniLM-L6-v2`)
+- scikit-learn
+
+### Frontend
+- Next.js 14 (App Router)
+- TypeScript
+- TailwindCSS
+- react-circular-progressbar
+
+## Project Structure
+
+```text
+backend/
+├── app/
+│   ├── main.py
+│   ├── routes.py
+│   ├── services/
+│   │   ├── resume_parser.py
+│   │   ├── jd_parser.py
+│   │   ├── matcher.py
+│   │   └── suggestions.py
+│   └── models.py
+├── requirements.txt
+├── Dockerfile
+
+frontend/
+├── app/
+│   ├── page.tsx
+│   └── agent/[agentId]/page.tsx
+├── components/
+│   ├── Header.tsx
+│   ├── AgentForm.tsx
+│   ├── MatchButton.tsx
+│   ├── MatchResult.tsx
+│   ├── SkillBadge.tsx
+│   ├── Accordion.tsx
+│   └── MatchMeter.tsx
+├── tailwind.config.js
+├── postcss.config.js
+├── package.json
+├── Dockerfile
+
+root/
+├── docker-compose.yml
+└── README.md
+```
+
+## API
+
+### `POST /analyze`
+
+Request (multipart/form-data):
+- `resume`: PDF file
+- `job_description`: string
+
+Response:
+
+```json
+{
+  "match_score": 82.5,
+  "matched_skills": ["python", "fastapi"],
+  "missing_skills": ["terraform", "snowflake"],
+  "supporting_points": {
+    "terraform": [
+      "• Designed IaC using Terraform...",
+      "• Automated Terraform modules...",
+      "• Integrated Terraform with CI/CD..."
+    ]
+  },
+  "placement_suggestions": {
+    "terraform": [
+      "Experience section under your latest role...",
+      "Projects section under cloud automation work..."
+    ]
+  }
+}
+```
+
+### Anthropic Suggestions (Optional)
+
+Set `ANTHROPIC_API_KEY` in the backend environment to generate contextual suggestions with Anthropic.
+Optional: set `ANTHROPIC_MODEL` (default: `claude-3-5-sonnet-latest`).
+If no API key is configured, the API uses deterministic fallback suggestions.
+
+## Run with Docker
+
+From project root:
+
+```bash
+docker-compose up --build
+```
+
+Then open:
+- Frontend: http://localhost:3000
+- Backend docs: http://localhost:8000/docs
+
+## Notes
+
+- The first analysis call may take longer because the sentence-transformer model is downloaded and loaded.
+- Frontend includes warnings for missing resume or job description.
+- Supporting points include copy-to-clipboard per missing skill.
