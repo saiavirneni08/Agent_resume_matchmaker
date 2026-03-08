@@ -8,8 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format": "prettier --write \"app/**/*.{ts,tsx,js,jsx}\" \"components/**/*.{ts,tsx,js,jsx}\" \"*.{js,json,md}\"",
+    "format:check": "prettier --check \"app/**/*.{ts,tsx,js,jsx}\" \"components/**/*.{ts,tsx,js,jsx}\" \"*.{js,json,md}\""
   },
   "dependencies": {
     "next": "14.2.30",

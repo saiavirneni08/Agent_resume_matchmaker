@@ -22,35 +22,51 @@ export default function MatchResult({ result }: MatchResultProps) {
       <div className="mt-6 grid gap-8 md:grid-cols-[220px_1fr]">
         <div>
           <MatchMeter score={result.match_score} />
-          <p className="mt-3 text-center text-sm text-slate-600">Overall match score</p>
+          <p className="mt-3 text-center text-sm text-slate-600">
+            Overall match score
+          </p>
         </div>
 
         <div className="space-y-6">
           <div>
-            <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500">Matched Skills</h3>
+            <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500">
+              Matched Skills
+            </h3>
             <div className="flex flex-wrap gap-2">
               {result.matched_skills.length > 0 ? (
-                result.matched_skills.map((skill) => <SkillBadge key={skill} skill={skill} type="matched" />)
+                result.matched_skills.map((skill) => (
+                  <SkillBadge key={skill} skill={skill} type="matched" />
+                ))
               ) : (
-                <p className="text-sm text-slate-500">No matched skills found.</p>
+                <p className="text-sm text-slate-500">
+                  No matched skills found.
+                </p>
               )}
             </div>
           </div>
 
           <div>
-            <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500">Missing Skills</h3>
+            <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500">
+              Missing Skills
+            </h3>
             <div className="flex flex-wrap gap-2">
               {result.missing_skills.length > 0 ? (
-                result.missing_skills.map((skill) => <SkillBadge key={skill} skill={skill} type="missing" />)
+                result.missing_skills.map((skill) => (
+                  <SkillBadge key={skill} skill={skill} type="missing" />
+                ))
               ) : (
-                <p className="text-sm text-slate-500">No missing skills identified.</p>
+                <p className="text-sm text-slate-500">
+                  No missing skills identified.
+                </p>
               )}
             </div>
           </div>
 
           {result.missing_skills.length > 0 && (
             <div>
-              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">Supporting Points</h3>
+              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
+                Supporting Points
+              </h3>
               <div className="space-y-3">
                 {result.missing_skills.map((skill) => (
                   <Accordion

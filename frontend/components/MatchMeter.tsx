@@ -17,7 +17,7 @@ export default function MatchMeter({ score }: MatchMeterProps) {
           textColor: "#0f172a",
           pathColor: "#2563eb",
           trailColor: "#e2e8f0",
-          textSize: "18px"
+          textSize: "18px",
         })}
       />
     </div>

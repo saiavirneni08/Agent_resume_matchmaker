@@ -9,7 +9,8 @@ type AgentFormProps = {
   agentId: string;
 };
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
 export default function AgentForm({ agentId }: AgentFormProps) {
   const [resumeFile, setResumeFile] = useState<File | null>(null);
@@ -41,7 +42,7 @@ export default function AgentForm({ agentId }: AgentFormProps) {
 
       const response = await fetch(`${API_BASE_URL}/analyze`, {
         method: "POST",
-        body: formData
+        body: formData,
       });
 
       if (!response.ok) {
@@ -54,7 +55,9 @@ export default function AgentForm({ agentId }: AgentFormProps) {
       setResult(payload);
     } catch (err) {
       console.error("Analyze request failed", err);
-      setError(err instanceof Error ? err.message : "Unexpected error occurred.");
+      setError(
+        err instanceof Error ? err.message : "Unexpected error occurred.",
+      );
     } finally {
       setLoading(false);
     }
@@ -66,7 +69,10 @@ export default function AgentForm({ agentId }: AgentFormProps) {
 
       <div className="mt-5 grid gap-4 md:grid-cols-2">
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700" htmlFor="resume-upload">
+          <label
+            className="mb-2 block text-sm font-medium text-slate-700"
+            htmlFor="resume-upload"
+          >
             Upload Resume (PDF)
           </label>
           <input
@@ -79,7 +85,10 @@ export default function AgentForm({ agentId }: AgentFormProps) {
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700" htmlFor="job-description">
+          <label
+            className="mb-2 block text-sm font-medium text-slate-700"
+            htmlFor="job-description"
+          >
             Job Description
           </label>
           <textarea
@@ -93,7 +102,9 @@ export default function AgentForm({ agentId }: AgentFormProps) {
         </div>
       </div>
 
-      {error && <p className="mt-4 text-sm font-medium text-rose-600">{error}</p>}
+      {error && (
+        <p className="mt-4 text-sm font-medium text-rose-600">{error}</p>
+      )}
 
       <MatchButton loading={loading} onClick={handleAnalyze} />
 
