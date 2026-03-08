@@ -8,17 +8,13 @@ LOGGER = logging.getLogger(__name__)
 
 ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages"
 ANTHROPIC_VERSION = "2023-06-01"
-DEFAULT_ANTHROPIC_MODEL = "claude-3-5-sonnet-latest"
+DEFAULT_ANTHROPIC_MODEL = "claude-sonnet-4-5"
 
 
-def _fallback_points(skill: str, recent_projects: List[str]) -> List[str]:
+def _fallback_points(skill: str) -> List[str]:
     cap_skill = skill.title()
-    project_context = recent_projects[-1] if recent_projects else "my latest project"
     return [
-        (
-            f"Implemented {cap_skill} in {project_context[:120]} "
-            "to improve reliability and delivery speed."
-        ),
+        (f"Implemented {cap_skill} in my latest project to improve reliability and delivery speed."),
         (
             "Collaborated with cross-functional teams to "
             f"operationalize {cap_skill} standards across releases."
@@ -30,34 +26,21 @@ def _fallback_points(skill: str, recent_projects: List[str]) -> List[str]:
     ]
 
 
-def _fallback_placements(skill: str, recent_projects: List[str]) -> List[str]:
-    placements = []
-    if recent_projects:
-        placements.append(
-            "Experience section under the most recent project: "
-            f"add one impact bullet mentioning {skill}."
-        )
-        placements.append(
-            "Projects section: include one implementation bullet and one outcomes bullet."
-        )
-    else:
-        placements.append(
-            f"Experience section under your latest role: add a bullet aligned to {skill}."
-        )
-        placements.append(
-            "Skills summary + one supporting bullet in Experience for proof of impact."
-        )
-    return placements
+def _fallback_placements(skill: str) -> List[str]:
+    return [
+        f"Experience section under your latest role: add a bullet aligned to {skill}.",
+        "Skills summary + one supporting bullet in Experience for proof of impact.",
+    ]
 
 
 def _fallback_suggestions(
-    missing_skills: List[str], recent_projects: List[str]
+    missing_skills: List[str],
 ) -> Tuple[Dict[str, List[str]], Dict[str, List[str]]]:
     points: Dict[str, List[str]] = {}
     placements: Dict[str, List[str]] = {}
     for skill in missing_skills:
-        points[skill] = _fallback_points(skill, recent_projects)
-        placements[skill] = _fallback_placements(skill, recent_projects)
+        points[skill] = _fallback_points(skill)
+        placements[skill] = _fallback_placements(skill)
     return points, placements
 
 
@@ -65,13 +48,7 @@ def _build_prompt(
     missing_skills: List[str],
     resume_text: str,
     job_description: str,
-    recent_projects: List[str],
 ) -> str:
-    recent_block = (
-        "\n".join(f"- {proj}" for proj in recent_projects)
-        if recent_projects
-        else "- Not confidently extracted"
-    )
     return f"""
 You are a resume optimization assistant.
 
@@ -79,12 +56,13 @@ Generate suggestions for missing skills based on resume and JD context.
 
 Rules:
 1) For each missing skill, return exactly 3 concise, resume-ready bullet points.
-2) Bullet points must be grounded in resume context,
-   especially the 2 most recent projects when available.
-3) Do not invent hard metrics or tools not implied by the provided text.
-4) Also provide 2 placement suggestions per skill
+2) First infer the 2 most recent projects from the resume text using company names and dates/years.
+3) Bullet points must be grounded in those inferred recent projects and resume context.
+4) If dates are ambiguous, infer recency from ordering and project chronology cues.
+5) Do not invent hard metrics or tools not implied by the provided text.
+6) Also provide 2 placement suggestions per skill
    describing where to add bullets in the resume.
-5) Return valid JSON only. No markdown.
+7) Return valid JSON only. No markdown.
 
 JSON schema:
 {{
@@ -99,11 +77,8 @@ JSON schema:
 Missing skills:
 {json.dumps(missing_skills)}
 
-Most recent two project snippets:
-{recent_block}
-
-Resume (full extracted text, truncated):
-{resume_text[:12000]}
+Resume (full extracted text):
+{resume_text}
 
 Job description (truncated):
 {job_description[:7000]}
@@ -121,7 +96,6 @@ def _extract_json_object(raw_text: str) -> Dict[str, object]:
 def _normalize_results(
     missing_skills: List[str],
     model_payload: Dict[str, object],
-    recent_projects: List[str],
 ) -> Tuple[Dict[str, List[str]], Dict[str, List[str]]]:
     raw_points = model_payload.get("supporting_points", {})
     raw_placements = model_payload.get("placement_suggestions", {})
@@ -141,12 +115,12 @@ def _normalize_results(
         ]
 
         if len(normalized_points) < 3:
-            normalized_points = _fallback_points(skill, recent_projects)
+            normalized_points = _fallback_points(skill)
         else:
             normalized_points = normalized_points[:3]
 
         if len(normalized_placements) < 2:
-            normalized_placements = _fallback_placements(skill, recent_projects)
+            normalized_placements = _fallback_placements(skill)
         else:
             normalized_placements = normalized_placements[:2]
 
@@ -161,14 +135,12 @@ def _call_anthropic(
     missing_skills: List[str],
     resume_text: str,
     job_description: str,
-    recent_projects: List[str],
 ) -> Tuple[Dict[str, List[str]], Dict[str, List[str]]]:
     model = os.getenv("ANTHROPIC_MODEL", DEFAULT_ANTHROPIC_MODEL)
     prompt = _build_prompt(
         missing_skills=missing_skills,
         resume_text=resume_text,
         job_description=job_description,
-        recent_projects=recent_projects,
     )
 
     payload = {
@@ -199,14 +171,13 @@ def _call_anthropic(
             text_chunks.append(chunk.get("text", ""))
     raw_text = "\n".join(text_chunks).strip()
     model_payload = _extract_json_object(raw_text)
-    return _normalize_results(missing_skills, model_payload, recent_projects)
+    return _normalize_results(missing_skills, model_payload)
 
 
 def build_supporting_content(
     missing_skills: List[str],
     resume_text: str,
     job_description: str,
-    recent_projects: List[str],
 ) -> Tuple[Dict[str, List[str]], Dict[str, List[str]]]:
     if not missing_skills:
         return {}, {}
@@ -214,7 +185,7 @@ def build_supporting_content(
     api_key = os.getenv("ANTHROPIC_API_KEY")
     if not api_key:
         LOGGER.info("ANTHROPIC_API_KEY not set; using deterministic fallback suggestions")
-        return _fallback_suggestions(missing_skills, recent_projects)
+        return _fallback_suggestions(missing_skills)
 
     try:
         LOGGER.info("Generating suggestions using Anthropic model")
@@ -223,8 +194,7 @@ def build_supporting_content(
             missing_skills=missing_skills,
             resume_text=resume_text,
             job_description=job_description,
-            recent_projects=recent_projects,
         )
     except (ValueError, KeyError, json.JSONDecodeError, error.URLError, TimeoutError) as exc:
         LOGGER.warning("Anthropic suggestion generation failed, using fallback. error=%s", exc)
-        return _fallback_suggestions(missing_skills, recent_projects)
+        return _fallback_suggestions(missing_skills)

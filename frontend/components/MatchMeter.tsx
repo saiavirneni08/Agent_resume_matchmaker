@@ -14,9 +14,9 @@ export default function MatchMeter({ score }: MatchMeterProps) {
         value={score}
         text={`${Math.round(score)}%`}
         styles={buildStyles({
-          textColor: "#0f172a",
-          pathColor: "#2563eb",
-          trailColor: "#e2e8f0",
+          textColor: "#f4f6ff",
+          pathColor: "#ff6b4a",
+          trailColor: "#2c3350",
           textSize: "18px",
         })}
       />

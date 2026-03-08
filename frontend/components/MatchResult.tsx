@@ -16,20 +16,22 @@ type MatchResultProps = {
 
 export default function MatchResult({ result }: MatchResultProps) {
   return (
-    <section className="mt-8 rounded-2xl bg-white p-6 shadow-soft">
-      <h2 className="text-xl font-semibold text-slate-900">Results</h2>
+    <section className="rounded-2xl bg-[var(--bg-card)] p-6 md:p-7">
+      <h2 className="text-2xl font-semibold text-[var(--text-main)]">
+        Results Snapshot
+      </h2>
 
       <div className="mt-6 grid gap-8 md:grid-cols-[220px_1fr]">
         <div>
           <MatchMeter score={result.match_score} />
-          <p className="mt-3 text-center text-sm text-slate-600">
+          <p className="mt-3 text-center text-sm text-[var(--text-muted)]">
             Overall match score
           </p>
         </div>
 
         <div className="space-y-6">
           <div>
-            <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500">
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
               Matched Skills
             </h3>
             <div className="flex flex-wrap gap-2">
@@ -38,7 +40,7 @@ export default function MatchResult({ result }: MatchResultProps) {
                   <SkillBadge key={skill} skill={skill} type="matched" />
                 ))
               ) : (
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-[var(--text-muted)]">
                   No matched skills found.
                 </p>
               )}
@@ -46,7 +48,7 @@ export default function MatchResult({ result }: MatchResultProps) {
           </div>
 
           <div>
-            <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500">
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
               Missing Skills
             </h3>
             <div className="flex flex-wrap gap-2">
@@ -55,7 +57,7 @@ export default function MatchResult({ result }: MatchResultProps) {
                   <SkillBadge key={skill} skill={skill} type="missing" />
                 ))
               ) : (
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-[var(--text-muted)]">
                   No missing skills identified.
                 </p>
               )}
@@ -64,7 +66,7 @@ export default function MatchResult({ result }: MatchResultProps) {
 
           {result.missing_skills.length > 0 && (
             <div>
-              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
+              <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
                 Supporting Points
               </h3>
               <div className="space-y-3">

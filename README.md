@@ -92,10 +92,10 @@ Response:
 }
 ```
 
-### Anthropic Suggestions (Optional)
+### Claude Suggestions (Optional)
 
-Set `ANTHROPIC_API_KEY` in the backend environment to generate contextual suggestions with Anthropic.
-Optional: set `ANTHROPIC_MODEL` (default: `claude-3-5-sonnet-latest`).
+Set `ANTHROPIC_API_KEY` in the backend environment to generate contextual suggestions with Claude.
+Optional: set `ANTHROPIC_MODEL` (default: `claude-sonnet-4-5`).
 If no API key is configured, the API uses deterministic fallback suggestions.
 
 ## Run with Docker

@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 import AppShell from "@/components/AppShell";
 import { MatchResponse } from "@/components/MatchResult";
+import { setScanInput, setScanResult } from "@/lib/scanSession";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
@@ -62,6 +63,8 @@ export default function ScanPage() {
       }
 
       const payload = (await response.json()) as MatchResponse;
+      setScanInput(resumeFile, jobDescription);
+      setScanResult(payload);
       sessionStorage.setItem("latestScanResult", JSON.stringify(payload));
       router.push("/scan/results");
     } catch (err) {
@@ -107,7 +110,9 @@ export default function ScanPage() {
             </button>
             <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
               <p className="text-[var(--text-muted)]">
-                {resumeFile ? `Selected: ${resumeFile.name}` : "No file selected"}
+                {resumeFile
+                  ? `Selected: ${resumeFile.name}`
+                  : "No file selected"}
               </p>
               {resumePreviewUrl ? (
                 <a
@@ -142,14 +147,6 @@ export default function ScanPage() {
       {error ? <p className="mt-4 text-base text-rose-300">{error}</p> : null}
 
       <div className="mt-6 flex flex-wrap justify-end gap-4">
-        <button
-          type="button"
-          onClick={runAnalyze}
-          disabled={loading}
-          className="rounded-xl border border-[var(--accent)] px-7 py-3 text-lg font-semibold text-[var(--text-main)] transition hover:bg-[var(--accent)]/12"
-        >
-          {loading ? "Optimizing..." : "One Click Optimization"}
-        </button>
         <button
           type="button"
           onClick={runAnalyze}

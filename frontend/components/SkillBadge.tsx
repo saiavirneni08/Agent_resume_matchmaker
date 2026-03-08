@@ -6,8 +6,8 @@ type SkillBadgeProps = {
 export default function SkillBadge({ skill, type }: SkillBadgeProps) {
   const classes =
     type === "matched"
-      ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-      : "bg-rose-50 text-rose-700 border-rose-200";
+      ? "bg-[#1f3a38] text-[#8ff0d6] border-[#2f6a61]"
+      : "bg-[#472338] text-[#ffb4cc] border-[#7b3a5e]";
 
   return (
     <span
