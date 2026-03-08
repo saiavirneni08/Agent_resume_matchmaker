@@ -15,7 +15,8 @@ def _fallback_points(skill: str) -> List[str]:
     cap_skill = skill.title()
     return [
         (
-            f"Implemented {cap_skill} in my latest project to improve reliability and delivery speed."
+            f"Implemented {cap_skill} in my latest project to improve reliability\
+              and delivery speed."
         ),
         (
             "Collaborated with cross-functional teams to "
