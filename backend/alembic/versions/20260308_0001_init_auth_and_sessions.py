@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from alembic import op
 import sqlalchemy as sa
+from alembic import op
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
@@ -20,7 +20,12 @@ def upgrade() -> None:
         sa.Column("email", sa.String(length=255), nullable=False),
         sa.Column("full_name", sa.String(length=255), nullable=True),
         sa.Column("password_hash", sa.String(length=512), nullable=False),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.func.now(),
+            nullable=False,
+        ),
     )
     op.create_index(op.f("ix_users_email"), "users", ["email"], unique=True)
 
@@ -30,11 +35,21 @@ def upgrade() -> None:
         sa.Column("user_id", postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column("session_token", sa.String(length=255), nullable=False),
         sa.Column("expires_at", sa.DateTime(timezone=True), nullable=False),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.func.now(),
+            nullable=False,
+        ),
         sa.Column("revoked_at", sa.DateTime(timezone=True), nullable=True),
         sa.ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="CASCADE"),
     )
-    op.create_index(op.f("ix_user_sessions_session_token"), "user_sessions", ["session_token"], unique=True)
+    op.create_index(
+        op.f("ix_user_sessions_session_token"),
+        "user_sessions",
+        ["session_token"],
+        unique=True,
+    )
     op.create_index(op.f("ix_user_sessions_user_id"), "user_sessions", ["user_id"], unique=False)
 
     op.create_table(
@@ -46,12 +61,24 @@ def upgrade() -> None:
         sa.Column("file_hash", sa.String(length=64), nullable=False),
         sa.Column("content", sa.LargeBinary(), nullable=False),
         sa.Column("extracted_text", sa.Text(), nullable=False),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.func.now(),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="SET NULL"),
         sa.UniqueConstraint("owner_scope", "file_hash", name="uq_uploaded_file_owner_hash"),
     )
-    op.create_index(op.f("ix_uploaded_files_file_hash"), "uploaded_files", ["file_hash"], unique=False)
-    op.create_index(op.f("ix_uploaded_files_owner_scope"), "uploaded_files", ["owner_scope"], unique=False)
+    op.create_index(
+        op.f("ix_uploaded_files_file_hash"), "uploaded_files", ["file_hash"], unique=False
+    )
+    op.create_index(
+        op.f("ix_uploaded_files_owner_scope"),
+        "uploaded_files",
+        ["owner_scope"],
+        unique=False,
+    )
     op.create_index(op.f("ix_uploaded_files_user_id"), "uploaded_files", ["user_id"], unique=False)
 
     op.create_table(
@@ -63,11 +90,21 @@ def upgrade() -> None:
         sa.Column("match_score", sa.Float(), nullable=False),
         sa.Column("matched_skills_json", sa.Text(), nullable=False),
         sa.Column("missing_skills_json", sa.Text(), nullable=False),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.func.now(),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(["uploaded_file_id"], ["uploaded_files.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="SET NULL"),
     )
-    op.create_index(op.f("ix_scan_sessions_uploaded_file_id"), "scan_sessions", ["uploaded_file_id"], unique=False)
+    op.create_index(
+        op.f("ix_scan_sessions_uploaded_file_id"),
+        "scan_sessions",
+        ["uploaded_file_id"],
+        unique=False,
+    )
     op.create_index(op.f("ix_scan_sessions_user_id"), "scan_sessions", ["user_id"], unique=False)
 
 
