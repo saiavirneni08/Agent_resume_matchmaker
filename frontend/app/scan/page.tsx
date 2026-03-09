@@ -51,9 +51,11 @@ export default function ScanPage() {
       const formData = new FormData();
       formData.append("resume", resumeFile);
       formData.append("job_description", jobDescription);
+      const token = localStorage.getItem("authToken");
 
       const response = await fetch(`${API_BASE_URL}/analyze`, {
         method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
         body: formData,
       });
 

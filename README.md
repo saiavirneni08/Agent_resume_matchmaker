@@ -1,159 +1,154 @@
 # Resume Agent
 
-Resume Agent is a full-stack application that matches uploaded resumes against job descriptions and returns:
+Resume Agent matches uploaded resumes against job descriptions and returns:
 
 - `match_score`
 - `matched_skills`
 - `missing_skills`
 - `supporting_points` for missing skills
-- `placement_suggestions` for where to add those points in the resume
+- `placement_suggestions` for where to add those points
+
+It now also supports:
+
+- PostgreSQL persistence via SQLAlchemy
+- Alembic migrations
+- user signup/login/logout (`/auth/*`)
+- session-based upload ownership
+- uploaded resume deduplication (same file hash for same user scope is reused)
+- persisted scan sessions (`scan_sessions`)
 
 ## Tech Stack
 
 ### Backend
 - FastAPI
-- Uvicorn
+- SQLAlchemy + Alembic
+- PostgreSQL (`psycopg`)
 - pdfplumber
 - sentence-transformers (`all-MiniLM-L6-v2`)
 - scikit-learn
 
 ### Frontend
-- Next.js 14 (App Router)
+- Next.js (App Router)
 - TypeScript
 - TailwindCSS
-- react-circular-progressbar
 
-## Project Structure
-
-```text
-backend/
-├── app/
-│   ├── main.py
-│   ├── routes.py
-│   ├── services/
-│   │   ├── resume_parser.py
-│   │   ├── jd_parser.py
-│   │   ├── matcher.py
-│   │   └── suggestions.py
-│   └── models.py
-├── requirements.txt
-├── Dockerfile
-
-frontend/
-├── app/
-│   ├── page.tsx
-│   └── agent/[agentId]/page.tsx
-├── components/
-│   ├── Header.tsx
-│   ├── AgentForm.tsx
-│   ├── MatchButton.tsx
-│   ├── MatchResult.tsx
-│   ├── SkillBadge.tsx
-│   ├── Accordion.tsx
-│   └── MatchMeter.tsx
-├── tailwind.config.js
-├── postcss.config.js
-├── package.json
-├── Dockerfile
-
-root/
-├── docker-compose.yml
-└── README.md
-```
-
-## API
-
-### `POST /analyze`
-
-Request (multipart/form-data):
-- `resume`: PDF file
-- `job_description`: string
-
-Response:
-
-```json
-{
-  "match_score": 82.5,
-  "matched_skills": ["python", "fastapi"],
-  "missing_skills": ["terraform", "snowflake"],
-  "supporting_points": {
-    "terraform": [
-      "• Designed IaC using Terraform...",
-      "• Automated Terraform modules...",
-      "• Integrated Terraform with CI/CD..."
-    ]
-  },
-  "placement_suggestions": {
-    "terraform": [
-      "Experience section under your latest role...",
-      "Projects section under cloud automation work..."
-    ]
-  }
-}
-```
-
-### Claude Suggestions (Optional)
-
-Set `ANTHROPIC_API_KEY` in the backend environment to generate contextual suggestions with Claude.
-Optional: set `ANTHROPIC_MODEL` (default: `claude-sonnet-4-5`).
-If no API key is configured, the API uses deterministic fallback suggestions.
-
-## Run with Docker
-
-From project root:
-
-```bash
-docker-compose up --build
-```
-
-Then open:
-- Frontend: http://localhost:3000
-- Backend docs: http://localhost:8000/docs
-
-## Local Run (Poetry + Just)
+## Run Locally (Poetry + Just)
 
 Prerequisites:
 - Python 3.12
 - Poetry
 - just
+- PostgreSQL (running locally on port 5432)
 
-From project root:
+1. Install dependencies:
 
 ```bash
 poetry install
+```
+
+2. Copy env and set keys:
+
+```bash
+cp .env.example .env
+```
+
+3. Run DB migrations:
+
+```bash
+just db-up
+```
+
+4. Run app:
+
+```bash
 just serve
 ```
 
-Useful commands:
+Backend docs: http://localhost:8000/docs
+
+## Run with Docker
 
 ```bash
-just install          # install python deps via poetry
-just backend          # run FastAPI backend
-just frontend-install # install frontend deps
-just frontend         # run Next.js frontend
-just check            # compile-check backend python files
+docker-compose up --build
 ```
 
-## Quality Gates (Before Merge)
+Services:
+- Postgres: `localhost:5432`
+- Backend: `localhost:8000`
+- Frontend: `localhost:3000`
 
-This repo includes CI checks in [ci.yml](/Users/saichowdaryavirneni/resume-agent/.github/workflows/ci.yml):
-- Backend lint + format check (`ruff`)
-- Frontend lint (`next lint`)
-- Text/repo hygiene (`pre-commit` hooks: trailing whitespace, EOF, yaml/json checks, etc.)
-
-Run the same checks locally before pushing:
+After backend starts, run migrations once:
 
 ```bash
-poetry install
-just precommit-install
+poetry run alembic -c backend/alembic.ini upgrade head
+```
+
+## DB Migration Commands
+
+```bash
+just db-up                       # alembic upgrade head
+just db-down                     # rollback one migration
+just db-revision "add table x"  # create new autogen migration
+```
+
+## Auth APIs
+
+### `POST /auth/signup`
+
+```json
+{
+  "email": "user@example.com",
+  "password": "strongpassword",
+  "full_name": "Sai"
+}
+```
+
+### `POST /auth/login`
+
+```json
+{
+  "email": "user@example.com",
+  "password": "strongpassword"
+}
+```
+
+Both return:
+
+```json
+{
+  "token": "...",
+  "user_id": "...",
+  "email": "user@example.com",
+  "full_name": "Sai",
+  "expires_at": "2026-03-08T..."
+}
+```
+
+### `GET /auth/me`
+Header: `Authorization: Bearer <token>`
+
+### `POST /auth/logout`
+Header: `Authorization: Bearer <token>`
+
+## Analyze/Suggest Persistence Behavior
+
+- If request has no auth token, file is stored under `anon` scope.
+- If token is present and valid, file is stored under `user:<user_id>` scope.
+- Dedup rule: `(owner_scope, file_hash)` unique.
+  - same user uploads same PDF again -> existing row reused
+  - no duplicate file row created
+- `scan_sessions` row is created for every analyze/suggest call.
+
+`/analyze` and `/suggest` responses now include:
+
+- `session_id`
+- `uploaded_file_id`
+- `file_already_exists`
+
+## Quality Gates
+
+```bash
+just lint-backend
+just lint-frontend
 just precommit
-just lint
 ```
-
-In GitHub, enable branch protection on `main` and require all CI status checks to pass before merge.
-
-## Notes
-
-- The first analysis call may take longer because the sentence-transformer model is downloaded and loaded.
-- Frontend includes warnings for missing resume or job description.
-- Supporting points include copy-to-clipboard per missing skill.

@@ -62,9 +62,11 @@ export default function ScanResultsPage() {
       formData.append("resume", resumeFile);
       formData.append("job_description", jobDescription);
       formData.append("missing_skills", JSON.stringify(result.missing_skills));
+      const token = localStorage.getItem("authToken");
 
       const response = await fetch(`${API_BASE_URL}/suggest`, {
         method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
         body: formData,
       });
 

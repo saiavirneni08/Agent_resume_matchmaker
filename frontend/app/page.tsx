@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import AuthHeaderActions from "@/components/AuthHeaderActions";
+
 const brands = ["Apple", "Amazon", "Meta", "Uber", "Bank of America"];
 
 export default function HomePage() {
@@ -25,17 +27,7 @@ export default function HomePage() {
           <Link href="/scan">LinkedIn</Link>
         </nav>
 
-        <div className="flex gap-3">
-          <button className="rounded-xl border border-[var(--line)] px-6 py-2.5 font-semibold text-white">
-            Login
-          </button>
-          <Link
-            href="/dashboard"
-            className="rounded-xl bg-[var(--accent)] px-6 py-2.5 font-semibold text-[#141414] transition hover:bg-[var(--accent-2)]"
-          >
-            Signup
-          </Link>
-        </div>
+        <AuthHeaderActions />
       </header>
 
       <section className="fade-up-delayed mt-24 max-w-[720px]">
@@ -50,10 +42,10 @@ export default function HomePage() {
           looking for.
         </p>
         <Link
-          href="/scan"
+          href="/dashboard"
           className="mt-10 inline-flex rounded-xl bg-[var(--accent)] px-8 py-4 text-xl font-semibold text-[#141414] transition hover:bg-[var(--accent-2)]"
         >
-          Scan Your Resume for Free
+          Explore Tools
         </Link>
       </section>
 

@@ -10,7 +10,6 @@ LOGGER = logging.getLogger(__name__)
 
 @lru_cache(maxsize=1)
 def get_model() -> SentenceTransformer:
-    LOGGER.info("Loading sentence-transformer model: all-MiniLM-L6-v2")
     return SentenceTransformer("all-MiniLM-L6-v2")
 
 
@@ -38,15 +37,6 @@ def compute_match(resume_skills: List[str], jd_skills: List[str]) -> Dict[str, o
 
     score = max(0.0, min(100.0, ((similarity * 0.6) + (coverage * 0.4)) * 100))
     score = round(score, 2)
-
-    LOGGER.info(
-        "Computed match score=%s similarity=%.4f coverage=%.4f matched=%s missing=%s",
-        score,
-        similarity,
-        coverage,
-        len(matched),
-        len(missing),
-    )
 
     return {
         "match_score": score,

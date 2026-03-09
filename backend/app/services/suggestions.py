@@ -53,24 +53,36 @@ def _build_prompt(
     job_description: str,
 ) -> str:
     return f"""
-You are a resume optimization assistant.
+You are an expert resume optimization assistant.
 
-Generate suggestions for missing skills based on resume and JD context.
+Your task is to generate resume-ready supporting bullet points for missing skills
+by analyzing both the resume and the job description.
 
 Rules:
-1) For each missing skill, return exactly 3 concise, resume-ready bullet points.
-2) First infer the 2 most recent projects from the resume text using company names and dates/years.
-3) Bullet points must be grounded in those inferred recent projects and resume context.
-4) If dates are ambiguous, infer recency from ordering and project chronology cues.
-5) Do not invent hard metrics or tools not implied by the provided text.
-6) Also provide 2 placement suggestions per skill
-   describing where to add bullets in the resume.
-7) Return valid JSON only. No markdown.
+
+1. First infer the TWO most recent projects or roles from the resume using company names,
+   project names, and dates/years.
+2. For EACH missing skill, generate resume-ready bullet points SEPARATELY for each of
+   the two most recent projects.
+3. Generate 2–3 concise bullet points per project (total 4–6 per skill).
+4. Bullet points must be grounded in the responsibilities, technologies, and context
+   mentioned in the resume.
+5. Do NOT invent tools, technologies, metrics, or achievements not implied in the resume
+   or job description.
+6. Each bullet should sound like a real resume accomplishment or responsibility.
+7. Avoid generic phrases such as "Worked on" or "Responsible for".
+8. Also provide two placement suggestions per skill explaining where the bullets
+   should be inserted in the resume.
+9. Return valid JSON only. Do not include markdown or explanations.
 
 JSON schema:
+
 {{
   "supporting_points": {{
-    "<skill>": ["...", "...", "..."]
+    "<skill>": {{
+      "recent_project_1": ["...", "...", "..."],
+      "recent_project_2": ["...", "...", "..."]
+    }}
   }},
   "placement_suggestions": {{
     "<skill>": ["...", "..."]
