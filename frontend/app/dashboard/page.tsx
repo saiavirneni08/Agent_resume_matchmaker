@@ -38,11 +38,11 @@ export default function DashboardPage() {
       title="Welcome Agent Resume!"
       subtitle="Pick a tool and start your next application sprint."
     >
-      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid auto-rows-fr gap-5 md:grid-cols-2 xl:grid-cols-3">
         {cards.map((card) => (
           <article
             key={card.title}
-            className="rounded-2xl bg-[var(--bg-card)] p-6"
+            className="flex h-full min-h-[220px] flex-col rounded-2xl bg-[var(--bg-card)] p-6"
           >
             <h2 className="text-2xl font-semibold">{card.title}</h2>
             <p className="mt-3 text-base leading-7 text-[var(--text-muted)]">
@@ -51,7 +51,7 @@ export default function DashboardPage() {
             {card.href ? (
               <Link
                 href={card.href}
-                className="mt-6 inline-flex rounded-xl bg-[var(--accent)] px-5 py-2.5 font-semibold text-[#141414] transition hover:bg-[var(--accent-2)]"
+                className="mt-auto inline-flex w-fit rounded-xl bg-[var(--accent)] px-5 py-2.5 font-semibold text-[#141414] transition hover:bg-[var(--accent-2)]"
               >
                 {card.cta}
               </Link>

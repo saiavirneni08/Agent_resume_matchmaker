@@ -273,10 +273,9 @@ def extract_text_from_pdf(file_bytes: bytes) -> str:
     with pdfplumber.open(io.BytesIO(file_bytes)) as pdf:
         for idx, page in enumerate(pdf.pages, start=1):
             text = page.extract_text() or ""
-            LOGGER.info("Extracted text from page %s", idx)
             full_text.append(text)
     combined = "\n".join(full_text).strip()
-    LOGGER.info("Completed PDF extraction. Characters extracted: %s", len(combined))
+    LOGGER.info("Completed PDF extraction")
     return combined
 
 
@@ -302,5 +301,4 @@ def extract_skills(text: str) -> List[str]:
                 found.add(skill)
 
     sorted_skills = sorted(found)
-    LOGGER.info("Extracted %s skills", len(sorted_skills))
     return sorted_skills

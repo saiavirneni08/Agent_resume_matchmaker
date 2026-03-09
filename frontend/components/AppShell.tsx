@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+
+import AuthHeaderActions from "./AuthHeaderActions";
 
 type AppShellProps = {
   children: React.ReactNode;
@@ -8,7 +12,7 @@ type AppShellProps = {
 
 const sideLinks = [
   { label: "Dashboard", href: "/dashboard" },
-  { label: "Resume Matcher", href: "/scan" },
+  { label: "History", href: "/history" },
   { label: "Shared With You", href: "#" },
   { label: "Archived Projects", href: "#" },
   { label: "Trashed Projects", href: "#" },
@@ -17,8 +21,8 @@ const sideLinks = [
 export default function AppShell({ children, title, subtitle }: AppShellProps) {
   return (
     <main className="min-h-screen p-4 md:p-6">
-      <div className="mx-auto grid max-w-[1320px] gap-4 md:grid-cols-[240px_1fr]">
-        <aside className="glass rounded-2xl p-5">
+      <div className="mx-auto grid w-full max-w-[1600px] gap-4 md:grid-cols-[250px_minmax(0,1fr)]">
+        <aside className="glass flex min-h-[calc(100vh-3rem)] flex-col rounded-2xl p-5 md:min-h-[calc(100vh-4rem)]">
           <Link href="/" className="inline-flex items-center gap-3">
             <span className="inline-grid h-11 w-11 place-items-center rounded-xl border border-[#ff6b4a66] text-xl">
               ✶
@@ -45,10 +49,10 @@ export default function AppShell({ children, title, subtitle }: AppShellProps) {
             ))}
           </nav>
 
-          <p className="mt-14 text-sm text-[var(--text-muted)]">Help</p>
+          <p className="mt-auto pt-8 text-sm text-[var(--text-muted)]">Help</p>
         </aside>
 
-        <section className="glass rounded-2xl p-6 md:p-8">
+        <section className="glass min-h-[calc(100vh-3rem)] rounded-2xl p-6 md:min-h-[calc(100vh-4rem)] md:p-8">
           <div className="mb-6 flex items-center justify-between border-b border-[var(--line)] pb-4">
             <div>
               <h1 className="text-3xl font-semibold">{title}</h1>
@@ -58,7 +62,7 @@ export default function AppShell({ children, title, subtitle }: AppShellProps) {
                 </p>
               ) : null}
             </div>
-            <div className="h-12 w-12 rounded-full bg-[var(--accent)]/85" />
+            <AuthHeaderActions compact />
           </div>
           {children}
         </section>

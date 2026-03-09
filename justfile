@@ -18,6 +18,15 @@ serve:
 backend:
   poetry run python -m backend.app.main
 
+update-db:
+  poetry run alembic -c backend/alembic.ini upgrade head
+
+downgrade-db:
+  poetry run alembic -c backend/alembic.ini downgrade -1
+
+db-revision message:
+  poetry run alembic -c backend/alembic.ini revision --autogenerate -m "{{message}}"
+
 frontend-install:
   cd frontend && npm install
 
